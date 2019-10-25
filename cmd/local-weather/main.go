@@ -1,4 +1,4 @@
-package main
+package cmd
 
 import (
 	"fmt"
@@ -36,7 +36,7 @@ func generateOutput(dst io.Writer, data []string) {
 	table.Render() // Send output
 }
 
-func run(args []string) {
+func Run(args []string) {
 	var zipcode string
 
 	app := cli.NewApp()
@@ -79,6 +79,6 @@ func run(args []string) {
 	}
 }
 
-func main() {
-	run(os.Args)
-}
+// func main() {
+// 	run(os.Args)
+// }
