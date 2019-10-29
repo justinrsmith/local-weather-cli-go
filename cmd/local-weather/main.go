@@ -1,6 +1,7 @@
-package cmd
+package main
 
 import (
+	"flag"
 	"fmt"
 	"io"
 	"log"
@@ -9,7 +10,6 @@ import (
 
 	"github.com/justinrsmith/local-weather-cli-go/pkg/fetchweather"
 	"github.com/olekukonko/tablewriter"
-	"github.com/urfave/cli"
 )
 
 func floatToString(inputNum float64) string {
@@ -36,49 +36,39 @@ func generateOutput(dst io.Writer, data []string) {
 	table.Render() // Send output
 }
 
-func Run(args []string) {
-	var zipcode string
+func execute() error {
+	var zipcode int
 
-	app := cli.NewApp()
+	flag.IntVar(&zipcode, "zipcode", 0, "zip code of city")
+	flag.IntVar(&zipcode, "z", 0, "zip code of city shorthand")
 
-	app.Flags = []cli.Flag{
-		cli.StringFlag{
-			Name:        "zipcode, z",
-			Usage:       "zipcode",
-			Destination: &zipcode,
-		},
+	flag.Parse()
+	if zipcode == 0 {
+		flag.PrintDefaults()
+		os.Exit(1)
 	}
 
-	app.Action = func(c *cli.Context) error {
-		if c.NumFlags() < 1 {
-			cli.ShowAppHelp(c)
-			return cli.NewExitError("You must provide a zipcode", 2)
-		}
-
-		localWeather, err := fetchweather.GetLocal(zipcode)
-		if err != nil {
-			return cli.NewExitError(err, 2)
-		}
-
-		localWeatherStr := []string{
-			localWeather.City,
-			localWeather.Current,
-			floatToString(kelvinToFarhenheit(localWeather.Temp)),
-			strconv.Itoa(localWeather.Humidity),
-			floatToString(kelvinToFarhenheit(localWeather.High)),
-			floatToString(kelvinToFarhenheit(localWeather.Low)),
-		}
-		generateOutput(os.Stdout, localWeatherStr)
-
-		return nil
-	}
-
-	err := app.Run(args)
+	localWeather, err := fetchweather.GetLocal(zipcode)
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	localWeatherStr := []string{
+		localWeather.City,
+		localWeather.Current,
+		floatToString(kelvinToFarhenheit(localWeather.Temp)),
+		strconv.Itoa(localWeather.Humidity),
+		floatToString(kelvinToFarhenheit(localWeather.High)),
+		floatToString(kelvinToFarhenheit(localWeather.Low)),
+	}
+
+	generateOutput(os.Stdout, localWeatherStr)
+
+	return nil
 }
 
-// func main() {
-// 	run(os.Args)
-// }
+func main() {
+	if err := execute(); err != nil {
+		os.Exit(-1)
+	}
+}

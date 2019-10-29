@@ -1,4 +1,4 @@
-package cmd
+package main
 
 import (
 	"bytes"
@@ -29,7 +29,7 @@ func TestKelvinToFarhenheit(t *testing.T) {
 func TestRun(t *testing.T) {
 	args := os.Args[0:1]
 	args = append(args, "--zipcode", "61008") // Append flag
-	Run(args)
+	execute()
 }
 
 func TestGenerateOutput(t *testing.T) {

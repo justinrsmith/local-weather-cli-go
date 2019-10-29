@@ -10,14 +10,14 @@ func TestGetData(t *testing.T) {
 }
 
 func TestErrorRaised(t *testing.T) {
-	_, err := GetLocal("6100")
+	_, err := GetLocal(6100)
 	if err == nil {
 		t.Errorf("Error was not returned for non existing city")
 	}
 }
 
 func TestLocal(t *testing.T) {
-	localWeather, _ := GetLocal("61008")
+	localWeather, _ := GetLocal(61008)
 	if localWeather.City != "Belvidere" {
 		t.Errorf("Incorrect data")
 	}

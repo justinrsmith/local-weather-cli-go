@@ -69,10 +69,10 @@ func getData(url string) (int, []byte) {
 }
 
 // GetLocal function calls to the api and builds LocalWeather struct
-func GetLocal(zip string) (LocalWeather, error) {
+func GetLocal(zip int) (LocalWeather, error) {
 	_, data := getData(
 		fmt.Sprintf(
-			"https://local-weather-api-256018.appspot.com/?zip=%s,us",
+			"https://local-weather-api-256018.appspot.com/?zip=%d,us",
 			zip,
 		),
 	)
