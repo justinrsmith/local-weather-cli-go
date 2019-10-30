@@ -35,11 +35,11 @@ func TestRun(t *testing.T) {
 func TestGenerateOutput(t *testing.T) {
 	data := []string{
 		"Belvidere",
-		"Sunny",
-		"52.5",
-		"85%",
-		"60.2",
-		"40.5",
+		"Clouds",
+		"33.8°F",
+		"83%",
+		"36.0°F",
+		"31.0°F",
 	}
 	var buf bytes.Buffer
 	generateOutput(&buf, data)
@@ -47,7 +47,7 @@ func TestGenerateOutput(t *testing.T) {
 	want := `+-----------+-------------------+--------------+----------+-----------+----------+
 |   CITY    | CURRENT CONDITION | CURRENT TEMP | HUMIDITY | HIGH TEMP | LOW TEMP |
 +-----------+-------------------+--------------+----------+-----------+----------+
-| Belvidere | Sunny             |         52.5 | 85%      |      60.2 |     40.5 |
+| Belvidere | Clouds            | 33.8°F       | 83%      | 36.0°F    | 31.0°F   |
 +-----------+-------------------+--------------+----------+-----------+----------+
 `
 	if buf.String() != want {

@@ -56,10 +56,10 @@ func execute() error {
 	localWeatherStr := []string{
 		localWeather.City,
 		localWeather.Current,
-		floatToString(kelvinToFarhenheit(localWeather.Temp)),
-		strconv.Itoa(localWeather.Humidity),
-		floatToString(kelvinToFarhenheit(localWeather.High)),
-		floatToString(kelvinToFarhenheit(localWeather.Low)),
+		fmt.Sprintf("%s\u00b0F", floatToString(kelvinToFarhenheit(localWeather.Temp))),
+		fmt.Sprintf("%s%%", strconv.Itoa(localWeather.Humidity)),
+		fmt.Sprintf("%s\u00b0F", floatToString(kelvinToFarhenheit(localWeather.High))),
+		fmt.Sprintf("%s\u00b0F", floatToString(kelvinToFarhenheit(localWeather.Low))),
 	}
 
 	generateOutput(os.Stdout, localWeatherStr)
