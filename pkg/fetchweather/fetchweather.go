@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
+	"math"
 	"net/http"
 	"os"
 )
@@ -52,11 +53,20 @@ type LocalWeather struct {
 	Low      float64
 }
 
-func getData(url string) (int, []byte) {
-	response, err := http.Get(url)
+var zgetData = getData
 
+func round(num float64) int {
+	return int(num + math.Copysign(0.5, num))
+}
+
+func toFixed(num float64, precision int) float64 {
+	output := math.Pow(10, float64(precision))
+	return float64(round(num*output)) / output
+}
+
+func getData(url string) ([]byte, error) {
+	response, err := http.Get(url)
 	if err != nil {
-		fmt.Print(err.Error())
 		os.Exit(1)
 	}
 	responseData, err := ioutil.ReadAll(response.Body)
@@ -65,18 +75,17 @@ func getData(url string) (int, []byte) {
 		log.Fatal(err)
 	}
 
-	return response.StatusCode, responseData
+	return responseData, err
 }
 
 // GetLocal function calls to the api and builds LocalWeather struct
-func GetLocal(zip int) (LocalWeather, error) {
-	_, data := getData(
+func GetLocal(zip int, scale string) (LocalWeather, error) {
+	data, _ := zgetData(
 		fmt.Sprintf(
 			"https://local-weather-api-256018.appspot.com/?zip=%d,us",
 			zip,
 		),
 	)
-
 	var responseObject Response
 	json.Unmarshal(data, &responseObject)
 
@@ -84,13 +93,32 @@ func GetLocal(zip int) (LocalWeather, error) {
 		return LocalWeather{}, errors.New(responseObject.Message)
 	}
 
+	var currentTemp float64
+	var minTemp float64
+	var maxTemp float64
+
+	switch {
+	case scale == "K":
+		currentTemp = responseObject.Main.KelvinTemp
+		minTemp = responseObject.Main.KelvinTempMin
+		maxTemp = responseObject.Main.KelvinTempMax
+	case scale == "C":
+		currentTemp = responseObject.Main.KelvinTemp - 273.15
+		minTemp = responseObject.Main.KelvinTempMin - 273.15
+		maxTemp = responseObject.Main.KelvinTempMax - 273.15
+	case scale == "F":
+		currentTemp = responseObject.Main.KelvinTemp*9/5 - 459.67
+		minTemp = responseObject.Main.KelvinTempMin*9/5 - 459.67
+		maxTemp = responseObject.Main.KelvinTempMax*9/5 - 459.67
+	}
+
 	lw := LocalWeather{
 		responseObject.Name,
 		responseObject.Weather[0].Main,
-		responseObject.Main.KelvinTemp,
+		toFixed(currentTemp, 2),
 		responseObject.Main.Humidity,
-		responseObject.Main.KelvinTempMax,
-		responseObject.Main.KelvinTempMin,
+		toFixed(minTemp, 2),
+		toFixed(maxTemp, 2),
 	}
 	return lw, nil
 }
