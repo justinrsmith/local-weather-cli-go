@@ -2,7 +2,6 @@ package main
 
 import (
 	"bytes"
-	"fmt"
 	"os"
 	"testing"
 )
@@ -14,15 +13,6 @@ func TestFloatToString(t *testing.T) {
 
 	if got != want {
 		t.Errorf("Value returned does not match expected")
-	}
-}
-
-func TestKelvinToFarhenheit(t *testing.T) {
-	got := kelvinToFarhenheit(280.040000)
-	fmt.Println(got)
-	want := 44.40199999999999
-	if got != want {
-		t.Errorf("No match")
 	}
 }
 
