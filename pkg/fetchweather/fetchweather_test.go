@@ -26,13 +26,13 @@ func TestGetData(t *testing.T) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Printf("%s", data)
 	resp, err := getData(ts.URL)
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	if strings.TrimSuffix(string(resp), "\n") != mockResp {
+		fmt.Println(data)
 		t.Errorf("Incorrect response returned")
 	}
 }
@@ -56,7 +56,6 @@ func TestGetLocalKelvin(t *testing.T) {
 		if err != nil {
 			log.Fatal(err)
 		}
-		// fmt.Printf("%s", data)
 		return data, err
 	}
 
@@ -85,7 +84,6 @@ func TestGetLocalCelsius(t *testing.T) {
 		if err != nil {
 			log.Fatal(err)
 		}
-		// fmt.Printf("%s", data)
 		return data, err
 	}
 
@@ -114,12 +112,10 @@ func TestGetLocalFahrenheit(t *testing.T) {
 		if err != nil {
 			log.Fatal(err)
 		}
-		// fmt.Printf("%s", data)
 		return data, err
 	}
 
 	localWeather, _ := GetLocal(61008, "F")
-	fmt.Println(localWeather.Temp)
 	if localWeather.Temp != 31.44 {
 		t.Errorf("Temperature is not the correct Fahrenheit temperature")
 	}
@@ -144,12 +140,29 @@ func TestGetLocalFails(t *testing.T) {
 		if err != nil {
 			log.Fatal(err)
 		}
-		// fmt.Printf("%s", data)
 		return data, err
 	}
 
 	_, err := GetLocal(6100, "K")
 	if err == nil {
 		t.Errorf("Error was returned for non existing city")
+	}
+}
+
+func TestRound(t *testing.T) {
+	expected := 2
+	got := round(1.674)
+
+	if got != expected {
+		t.Errorf("Rounding failed")
+	}
+}
+
+func TestToFixed(t *testing.T) {
+	expected := 1.65
+	got := toFixed(1.647, 2)
+
+	if got != expected {
+		t.Errorf("Rounding to fixed decimal failed")
 	}
 }
