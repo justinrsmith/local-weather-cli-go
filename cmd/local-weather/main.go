@@ -16,11 +16,6 @@ func floatToString(inputNum float64) string {
 	return fmt.Sprintf("%.1f", inputNum)
 }
 
-func kelvinToFarhenheit(temp float64) float64 {
-	farhenheit := temp*9/5 - 459.67
-	return farhenheit
-}
-
 func generateOutput(dst io.Writer, data []string) {
 	table := tablewriter.NewWriter(dst)
 	table.SetHeader([]string{
@@ -48,7 +43,7 @@ func execute() error {
 		os.Exit(1)
 	}
 
-	localWeather, err := fetchweather.GetLocal(zipcode)
+	localWeather, err := fetchweather.GetLocal(zipcode, "F")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -56,10 +51,10 @@ func execute() error {
 	localWeatherStr := []string{
 		localWeather.City,
 		localWeather.Current,
-		fmt.Sprintf("%s\u00b0F", floatToString(kelvinToFarhenheit(localWeather.Temp))),
-		fmt.Sprintf("%s%%", strconv.Itoa(localWeather.Humidity)),
-		fmt.Sprintf("%s\u00b0F", floatToString(kelvinToFarhenheit(localWeather.High))),
-		fmt.Sprintf("%s\u00b0F", floatToString(kelvinToFarhenheit(localWeather.Low))),
+		floatToString(localWeather.Temp),
+		strconv.Itoa(localWeather.Humidity),
+		floatToString(localWeather.High),
+		floatToString(localWeather.Low),
 	}
 
 	generateOutput(os.Stdout, localWeatherStr)
