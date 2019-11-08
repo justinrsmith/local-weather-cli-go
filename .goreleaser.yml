@@ -6,6 +6,7 @@ before:
     # - go mod tidy
     # you may remove this if you don't need go generate
     - go generate ./...
+project_name: local-weather
 builds:
 - main: ./cmd/local-weather/main.go
   env:
