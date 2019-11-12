@@ -34,6 +34,11 @@ func generateOutput(dst io.Writer, data []string) {
 func execute() error {
 	var zipcode int
 
+	flag.Usage = func() {
+		flag.PrintDefaults()
+		os.Exit(0)
+	}
+
 	flag.IntVar(&zipcode, "zipcode", 0, "zip code of city")
 	flag.IntVar(&zipcode, "z", 0, "zip code of city shorthand")
 
