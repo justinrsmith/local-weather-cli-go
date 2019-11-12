@@ -1,6 +1,6 @@
 # Local Weather CLI
 
-Lightweight CLI for quickly checking the current weather
+Lightweight CLI for quickly checking the current weather in your terminal.
 
 ## Installation
 
@@ -33,4 +33,12 @@ local-weather --zipcode 10007
 
 `-z <zipcode>` or `--zipcode <zipcode>`
 
+Get the weather for a US city by zipcode.
+
 ![Example](./docs/examples/zipcode_usage.svg)
+
+`-h` or `--help`
+
+Get detailed information about CLI commands.
+
+![Example](./docs/examples/help_usage.svg)
