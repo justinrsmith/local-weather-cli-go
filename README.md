@@ -32,3 +32,5 @@ local-weather --zipcode 10007
 ### Options
 
 `-z <zipcode>` or `--zipcode <zipcode>`
+
+![Example](./docs/examples/zipcode_usage.svg)
