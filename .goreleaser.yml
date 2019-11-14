@@ -11,6 +11,10 @@ builds:
 - main: ./cmd/local-weather/main.go
   env:
   - CGO_ENABLED=0
+  goos:
+      - darwin
+      - linux
+      - windows
 archives:
 - replacements:
     darwin: Darwin
