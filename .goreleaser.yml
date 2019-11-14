@@ -42,3 +42,8 @@ brews:
     description: "Lightweight CLI for quickly checking the current weather."
 
     install: bin.install "local-weather"
+scoop:
+  bucket:
+    owner: justinrsmith
+    name: scoop-local-weather-cli-go
+  description: "Lightweight CLI for quickly checking the current weather."
