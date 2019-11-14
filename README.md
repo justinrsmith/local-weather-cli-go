@@ -6,10 +6,19 @@ Lightweight CLI for quickly checking the current weather in your terminal.
 
 ### macOS
 
-Local Weather CLI is available for installation via [Homebrew](https://brew.sh/):
+Local Weather CLI is available for installation on macOS via [Homebrew](https://brew.sh/):
 
 ```sh
 brew install justinrsmith/local-weather-cli-go/local-weather
+```
+
+### Windows
+
+Local Weather CLI is available for installation on Windows via [Scoop](https://scoop.sh/):
+
+```sh
+scoop bucket add local-weather https://github.com/justinrsmith/local-weather-cli-go.git
+scoop install local-weather
 ```
 
 ### Binary
