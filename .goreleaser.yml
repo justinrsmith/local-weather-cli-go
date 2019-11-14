@@ -11,6 +11,10 @@ builds:
 - main: ./cmd/local-weather/main.go
   env:
   - CGO_ENABLED=0
+  goos:
+      - darwin
+      - linux
+      - windows
 archives:
 - replacements:
     darwin: Darwin
@@ -42,3 +46,8 @@ brews:
     description: "Lightweight CLI for quickly checking the current weather."
 
     install: bin.install "local-weather"
+scoop:
+  bucket:
+    owner: justinrsmith
+    name: scoop-local-weather-cli-go
+  description: "Lightweight CLI for quickly checking the current weather."
