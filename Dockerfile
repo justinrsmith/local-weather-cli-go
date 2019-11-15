@@ -1,3 +1,3 @@
 FROM scratch
-COPY bin /
-ENTRYPOINT ["/bin"]
+COPY local-weather /bin/local-weather/
+ENTRYPOINT ["/bin/local-weather"]
