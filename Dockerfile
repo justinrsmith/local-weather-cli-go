@@ -1,3 +1,3 @@
 FROM scratch
-COPY mybin /
-ENTRYPOINT ["/mybin"]
+COPY bin /
+ENTRYPOINT ["/bin"]
