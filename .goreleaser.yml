@@ -55,5 +55,5 @@ dockers:
   - binaries:
     - local-weather
     image_templates:
-    - "gcr.io/justin-dev-253220/local-weather-cli-go:latest"
-    - "gcr.io/justin-dev-253220/local-weather-cli-go:{{ .Tag }}"
+    - "justinrsmith88/local-weather-cli-go:latest"
+    - "justinrsmith88/local-weather-cli-go:{{ .Tag }}"
