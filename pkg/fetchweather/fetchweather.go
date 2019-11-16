@@ -67,12 +67,14 @@ func toFixed(num float64, precision int) float64 {
 func getData(url string) ([]byte, error) {
 	response, err := http.Get(url)
 	if err != nil {
+		log.Fatal(err)
 		os.Exit(1)
 	}
 	responseData, err := ioutil.ReadAll(response.Body)
 	response.Body.Close()
 	if err != nil {
 		log.Fatal(err)
+		os.Exit(1)
 	}
 
 	return responseData, err
