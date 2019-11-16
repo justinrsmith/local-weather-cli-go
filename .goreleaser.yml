@@ -51,3 +51,9 @@ scoop:
     owner: justinrsmith
     name: scoop-local-weather-cli-go
   description: "Lightweight CLI for quickly checking the current weather."
+dockers:
+  - binaries:
+    - local-weather
+    image_templates:
+    - "justinrsmith88/local-weather-cli-go:latest"
+    - "justinrsmith88/local-weather-cli-go:{{ .Tag }}"

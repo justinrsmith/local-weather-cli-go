@@ -21,6 +21,14 @@ scoop bucket add local-weather https://github.com/justinrsmith/local-weather-cli
 scoop install local-weather
 ```
 
+### Docker
+
+Local Weather CLI is also available as a [Docker](https://www.docker.com/) image: [`justinrsmith88/local-weather-cli-go`](https://hub.docker.com/r/justinrsmith88/local-weather-cli-go):
+
+```sh
+docker run --rm justinrsmith88/local-weather-cli-go:latest --help
+```
+
 ### Binary
 
 To install the latest binary release, run:
