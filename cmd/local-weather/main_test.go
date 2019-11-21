@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"flag"
 	"os"
 	"testing"
 )
@@ -16,10 +17,20 @@ func TestFloatToString(t *testing.T) {
 	}
 }
 
-func TestRun(t *testing.T) {
-	args := os.Args[0:1]
-	args = append(args, "--zipcode", "61008") // Append flag
+func TestRunNoScale(t *testing.T) {
+	oldArgs := os.Args
+	defer func() { os.Args = oldArgs }()
+	os.Args = []string{"local-weather", "--zipcode", "61008"}
 	execute()
+	flag.CommandLine = flag.NewFlagSet(os.Args[0], flag.ExitOnError)
+}
+
+func TestRunWithScale(t *testing.T) {
+	oldArgs := os.Args
+	defer func() { os.Args = oldArgs }()
+	os.Args = []string{"local-weather", "--zipcode", "61008", "--scale", "K"}
+	execute()
+	flag.CommandLine = flag.NewFlagSet(os.Args[0], flag.ExitOnError)
 }
 
 func TestGenerateOutput(t *testing.T) {

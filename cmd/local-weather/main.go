@@ -33,14 +33,17 @@ func generateOutput(dst io.Writer, data []string) {
 
 func execute() error {
 	var zipcode int
+	var scale string
 
 	flag.Usage = func() {
 		flag.PrintDefaults()
 		os.Exit(0)
 	}
 
-	flag.IntVar(&zipcode, "zipcode", 0, "zip code of city")
-	flag.IntVar(&zipcode, "z", 0, "zip code of city shorthand")
+	flag.IntVar(&zipcode, "zipcode", 0, "zip code of U.S. city")
+	flag.IntVar(&zipcode, "z", 0, "zip code of U.S. city shorthand")
+	flag.StringVar(&scale, "scale", "F", "temperature scale to use {C - Celcius|F - Fahrenheit)|K - Kelvin}")
+	flag.StringVar(&scale, "s", "F", "temperature scale to use {C - Celcius|F - Fahrenheit)|K - Kelvin}")
 
 	flag.Parse()
 	if zipcode == 0 {
@@ -48,7 +51,7 @@ func execute() error {
 		os.Exit(1)
 	}
 
-	localWeather, err := fetchweather.GetLocal(zipcode, "F")
+	localWeather, err := fetchweather.GetLocal(zipcode, scale)
 	if err != nil {
 		log.Fatal(err)
 	}
