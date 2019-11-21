@@ -54,6 +54,17 @@ Get the weather for a US city by zipcode.
 
 ![Example](./docs/examples/zipcode_usage.svg)
 
+`-s <scale to use>` or `--scale <scale to use>`
+
+Select which tempeature scale to use in output.
+
+Valid scales:
+- `C` - Celcius
+- `F` - Fahrenheit (default)
+- `K` - Kelvin
+
+![Example](./docs/examples/zipcode_usage.svg)
+
 `-h` or `--help`
 
 Get detailed information about CLI commands.
