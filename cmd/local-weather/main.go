@@ -17,6 +17,15 @@ func floatToString(inputNum float64) string {
 	return fmt.Sprintf("%.1f", inputNum)
 }
 
+func stringInSlice(str string, list []string) bool {
+	for _, val := range list {
+		if str == val {
+			return true
+		}
+	}
+	return false
+}
+
 func generateOutput(dst io.Writer, data []string) {
 	table := tablewriter.NewWriter(dst)
 	table.SetHeader([]string{
@@ -63,9 +72,13 @@ func execute() error {
 		flag.PrintDefaults()
 		os.Exit(1)
 	}
-
 	// temp scale flag should be case insensitive
 	scale = strings.ToUpper(scale)
+	if !stringInSlice(scale, []string{"C", "K", "F"}) {
+		flag.PrintDefaults()
+		fmt.Println("Invalid temperature scale selected")
+		os.Exit(1)
+	}
 
 	localWeather, err := fetchweather.GetLocal(zipcode, scale)
 	if err != nil {

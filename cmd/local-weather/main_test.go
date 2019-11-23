@@ -82,3 +82,21 @@ func TestGetTempScaleLabelCelcius(t *testing.T) {
 		t.Errorf("Proper temperature scale label not returned for Celcius")
 	}
 }
+
+func TestStringInSlice(t *testing.T) {
+	expected := true
+	got := stringInSlice("K", []string{"C", "K", "F"})
+
+	if got != expected {
+		t.Errorf("Expected value not found in slice")
+	}
+}
+
+func TestStringInSliceNotThere(t *testing.T) {
+	expected := false
+	got := stringInSlice("Z", []string{"C", "K", "F"})
+
+	if got != expected {
+		t.Errorf("Value found in slice when not expected to be there")
+	}
+}
