@@ -56,7 +56,7 @@ Get the weather for a US city by zipcode.
 
 `-s <scale to use>` or `--scale <scale to use>`
 
-Select which tempeature scale to use in output.
+Select which temperature scale to use in output.
 
 Valid scales:
 - `C` - Celcius
