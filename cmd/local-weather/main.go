@@ -7,6 +7,7 @@ import (
 	"log"
 	"os"
 	"strconv"
+	"strings"
 
 	"github.com/justinrsmith/local-weather-cli-go/pkg/fetchweather"
 	"github.com/olekukonko/tablewriter"
@@ -62,6 +63,9 @@ func execute() error {
 		flag.PrintDefaults()
 		os.Exit(1)
 	}
+
+	// temp scale flag should be case insensitive
+	scale = strings.ToUpper(scale)
 
 	localWeather, err := fetchweather.GetLocal(zipcode, scale)
 	if err != nil {
