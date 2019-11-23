@@ -63,7 +63,7 @@ Valid scales:
 - `F` - Fahrenheit (default)
 - `K` - Kelvin
 
-![Example](./docs/examples/zipcode_usage.svg)
+![Example](./docs/examples/scale_usage.svg)
 
 `-h` or `--help`
 
