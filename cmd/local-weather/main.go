@@ -31,6 +31,18 @@ func generateOutput(dst io.Writer, data []string) {
 	table.Render() // Send output
 }
 
+func getTempScaleLabel(scale string) string {
+	switch {
+	case scale == "K":
+		return "K"
+	case scale == "F":
+		return "\u00b0F"
+	case scale == "C":
+		return "\u00b0C"
+	}
+	return ""
+}
+
 func execute() error {
 	var zipcode int
 	var scale string
@@ -56,13 +68,15 @@ func execute() error {
 		log.Fatal(err)
 	}
 
+	tempScale := getTempScaleLabel(scale)
+
 	localWeatherStr := []string{
 		localWeather.City,
 		localWeather.Current,
-		fmt.Sprintf("%s\u00b0F", floatToString(localWeather.Temp)),
+		fmt.Sprintf("%s%s", floatToString(localWeather.Temp), tempScale),
 		fmt.Sprintf("%s%%", strconv.Itoa(localWeather.Humidity)),
-		fmt.Sprintf("%s\u00b0F", floatToString(localWeather.High)),
-		fmt.Sprintf("%s\u00b0F", floatToString(localWeather.Low)),
+		fmt.Sprintf("%s%s", floatToString(localWeather.High), tempScale),
+		fmt.Sprintf("%s%s", floatToString(localWeather.Low), tempScale),
 	}
 
 	generateOutput(os.Stdout, localWeatherStr)
