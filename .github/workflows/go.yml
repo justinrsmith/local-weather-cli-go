@@ -17,4 +17,6 @@ jobs:
       uses: actions/checkout@v1
 
     - name: Run Unit test
-      run: make test
+      run: |
+        make deps
+        make test
