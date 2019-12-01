@@ -1,3 +1,5 @@
+![](https://github.com/justinrsmith/local-weather-cli-go/workflows/build/badge.svg)
+
 # Local Weather CLI
 
 Lightweight CLI for quickly checking the current weather in your terminal.
