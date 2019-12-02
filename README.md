@@ -1,4 +1,5 @@
 ![](https://github.com/justinrsmith/local-weather-cli-go/workflows/build/badge.svg)
+[![Go Report Card](https://goreportcard.com/badge/github.com/justinrsmith/local-weather-cli-go)](https://goreportcard.com/report/github.com/justinrsmith/local-weather-cli-go)
 
 # Local Weather CLI
 
