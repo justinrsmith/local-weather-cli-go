@@ -1,5 +1,7 @@
-![](https://github.com/justinrsmith/local-weather-cli-go/workflows/build/badge.svg)
+[![Build](https://github.com/justinrsmith/local-weather-cli-go/workflows/build/badge.svg)](https://github.com/justinrsmith/local-weather-cli-go/actions?query=workflow%3Abuild)
 [![Go Report Card](https://goreportcard.com/badge/github.com/justinrsmith/local-weather-cli-go)](https://goreportcard.com/report/github.com/justinrsmith/local-weather-cli-go)
+[![Release](https://img.shields.io/github/release/justinrsmith/local-weather-cli-go)](https://github.com/justinrsmith/local-weather-cli-go/releases)
+[![GoDoc](https://godoc.org/github.com/gin-gonic/gin?status.svg)](https://godoc.org/github.com/justinrsmith/local-weather-cli-go/pkg/fetchweather)
 
 # Local Weather CLI
 
