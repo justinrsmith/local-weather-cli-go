@@ -64,8 +64,8 @@ func execute() error {
 
 	flag.IntVar(&zipcode, "zipcode", 0, "zip code of U.S. city")
 	flag.IntVar(&zipcode, "z", 0, "zip code of U.S. city shorthand")
-	flag.StringVar(&scale, "scale", "F", "temperature scale to use {C - Celcius|F - Fahrenheit)|K - Kelvin}")
-	flag.StringVar(&scale, "s", "F", "temperature scale to use {C - Celcius|F - Fahrenheit)|K - Kelvin}")
+	flag.StringVar(&scale, "scale", "F", "temperature scale to use {C - Celsius|F - Fahrenheit)|K - Kelvin}")
+	flag.StringVar(&scale, "s", "F", "temperature scale to use {C - Celsius|F - Fahrenheit)|K - Kelvin}")
 
 	flag.Parse()
 	if zipcode == 0 {
