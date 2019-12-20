@@ -74,12 +74,12 @@ func TestGetTempScaleLabelFahrenheit(t *testing.T) {
 	}
 }
 
-func TestGetTempScaleLabelCelcius(t *testing.T) {
+func TestGetTempScaleLabelCelsius(t *testing.T) {
 	expected := "\u00b0C"
 	got := getTempScaleLabel("C")
 
 	if got != expected {
-		t.Errorf("Proper temperature scale label not returned for Celcius")
+		t.Errorf("Proper temperature scale label not returned for Celsius")
 	}
 }
 
