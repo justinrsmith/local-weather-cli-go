@@ -64,7 +64,7 @@ Get the weather for a US city by zipcode.
 Select which temperature scale to use in output.
 
 Valid scales:
-- `C` - Celcius
+- `C` - Celsius
 - `F` - Fahrenheit (default)
 - `K` - Kelvin
 
