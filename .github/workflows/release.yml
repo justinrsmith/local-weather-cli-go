@@ -19,7 +19,6 @@ jobs:
         name: Build
         run: |
           make deps
-          make build
       -
         name: Docker login
         uses: azure/docker-login@v1
