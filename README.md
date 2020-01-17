@@ -7,6 +7,8 @@
 
 Lightweight CLI for quickly checking the current weather in your terminal.
 
+> Currently only supporting U.S. zipcodes. Additional country support and lookup options to come.
+
 ## Installation
 
 ### macOS
@@ -75,3 +77,11 @@ Valid scales:
 Get detailed information about CLI commands.
 
 ![Example](./docs/examples/help_usage.svg)
+
+## Contributing
+
+Contributions are welcome. More information is available [here](./docs/contributing.md).
+
+## License
+
+[MIT](LICENSE)

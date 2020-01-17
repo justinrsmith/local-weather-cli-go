@@ -18,3 +18,5 @@
 # Misc
 .DS_Store
 /dist
+
+local-weather
