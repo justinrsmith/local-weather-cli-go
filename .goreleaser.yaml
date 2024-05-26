@@ -46,3 +46,15 @@ changelog:
     exclude:
       - "^docs:"
       - "^test:"
+
+brews:
+  - name: local-weather
+
+    # Github repository to push the tap to.
+    homepage: homebrew-local-weather-cli-go
+
+    # Your app's description.
+    # Default is empty.
+    description: "Lightweight CLI for quickly checking the current weather."
+
+    install: bin.install "local-weather"
