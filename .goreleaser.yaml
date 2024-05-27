@@ -52,8 +52,6 @@ brews:
   - repository:
       owner: justinrsmith
       name: homebrew-local-weather-cli-go
-    directory: Formula
     homepage: "https://github.com/justinrsmith/local-weather-cli-go"
     description: "Lightweight CLI for quickly checking the current weather."
     license: "MIT"
-  - install: bin.install "local-weather"
