@@ -49,7 +49,7 @@ changelog:
 
 brews:
   - name: local-weather
-  - repository:
+    repository:
       owner: justinrsmith
       name: homebrew-local-weather-cli-go
     directory: Formula
