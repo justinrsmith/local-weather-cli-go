@@ -23,7 +23,7 @@ builds:
       - linux
       - windows
       - darwin
-    main: cmd/local-weather/main.go
+    main: ./cmd/local-weather/main.go
 
 archives:
   - format: tar.gz
