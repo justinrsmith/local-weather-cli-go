@@ -24,6 +24,7 @@ builds:
       - windows
       - darwin
     main: ./cmd/local-weather/main.go
+    binary: local-weather
 
 archives:
   - format: tar.gz
