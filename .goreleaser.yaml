@@ -59,4 +59,8 @@ brews:
     license: "MIT"
     install: bin.install "local-weather"
 
-    
+scoop:
+  repository:
+    owner: justinrsmith
+    name: scoop-local-weather-cli-go
+  description: "Lightweight CLI for quickly checking the current weather."
