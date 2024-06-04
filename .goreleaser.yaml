@@ -67,7 +67,6 @@ scoops:
     description: "Lightweight CLI for quickly checking the current weather."
 
 dockers:
-  - image: local-weather
-    tag_templates:
-      - '{{ .Tag }}'
-      - latest
+  - image_templates:
+    - "justinrsmith88/local-weather-cli-go:latest"
+    - "justinrsmith88/local-weather-cli-go:{{ .Tag }}"
