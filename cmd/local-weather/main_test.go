@@ -18,20 +18,20 @@ func TestFloatToString(t *testing.T) {
 func TestGenerateOutput(t *testing.T) {
 	data := []string{
 		"Belvidere",
-		"Clouds",
-		"33.8°F",
-		"83%",
-		"36.0°F",
-		"31.0°F",
+		"Clear",
+		"68.9°F",
+		"82%",
+		"3.2mph West-Northwest",
+		"69.3°F",
 	}
 	var buf bytes.Buffer
 	generateOutput(&buf, data)
 
-	want := `+-----------+-------------------+--------------+----------+-----------+----------+
-|   CITY    | CURRENT CONDITION | CURRENT TEMP | HUMIDITY | HIGH TEMP | LOW TEMP |
-+-----------+-------------------+--------------+----------+-----------+----------+
-| Belvidere | Clouds            | 33.8°F       | 83%      | 36.0°F    | 31.0°F   |
-+-----------+-------------------+--------------+----------+-----------+----------+
+	want := `+-----------+-------------------+--------------+----------+-----------------------+------------+
+|   CITY    | CURRENT CONDITION | CURRENT TEMP | HUMIDITY |         WIND          | FEELS LIKE |
++-----------+-------------------+--------------+----------+-----------------------+------------+
+| Belvidere | Clear             | 68.9°F       | 82%      | 3.2mph West-Northwest | 69.3°F     |
++-----------+-------------------+--------------+----------+-----------------------+------------+
 `
 	if buf.String() != want {
 		t.Errorf("Generated output does not match expected")

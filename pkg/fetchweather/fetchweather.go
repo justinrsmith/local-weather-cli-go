@@ -15,7 +15,7 @@ import (
 type Response struct {
 	Weather  []Weather `json:"weather"`
 	Main     Main      `json:"main"`
-	Wind     []Wind    `json:"wind"`
+	Wind     Wind      `json:"wind"`
 	Name     string    `json:"name"`
 	RespCode int       `json:"cod"`
 	Message  string    `json:"message"`
@@ -30,11 +30,10 @@ type Weather struct {
 
 // Main struct
 type Main struct {
-	KelvinTemp    float64 `json:"temp"`
-	Pressure      int     `json:"pressure"`
-	Humidity      int     `json:"humidity"`
-	KelvinTempMin float64 `json:"temp_min"`
-	KelvinTempMax float64 `json:"temp_max"`
+	KelvinTemp      float64 `json:"temp"`
+	KelvinFeelsLike float64 `json:"feels_like"`
+	Pressure        int     `json:"pressure"`
+	Humidity        int     `json:"humidity"`
 }
 
 // Wind struct
@@ -45,12 +44,13 @@ type Wind struct {
 
 // LocalWeather struct
 type LocalWeather struct {
-	City     string
-	Current  string
-	Temp     float64
-	Humidity int
-	High     float64
-	Low      float64
+	City          string
+	Current       string
+	Temp          float64
+	Humidity      int
+	WindSpeed     float64
+	WindDirection string
+	FeelsLike     float64
 }
 
 var zgetData = getData
@@ -80,6 +80,18 @@ func getData(url string) ([]byte, error) {
 	return responseData, err
 }
 
+func WindDegreeToDirection(degree float64) string {
+	directions := [16]string{
+		"North", "North-Northeast", "Northeast", "East-Northeast", "East",
+		"East-Southeast", "Southeast", "South-Southeast", "South",
+		"South-Southwest", "Southwest", "West-Southwest", "West",
+		"West-Northwest", "Northwest", "North-Northwest"}
+
+	index := int((degree+11.25)/22.5) % 16
+
+	return directions[index]
+}
+
 // GetLocal function calls to the api and builds LocalWeather struct
 func GetLocal(zip int, scale string) (LocalWeather, error) {
 	data, _ := zgetData(
@@ -96,22 +108,18 @@ func GetLocal(zip int, scale string) (LocalWeather, error) {
 	}
 
 	var currentTemp float64
-	var minTemp float64
-	var maxTemp float64
+	var feelsLikeTemp float64
 
 	switch {
 	case scale == "K":
 		currentTemp = responseObject.Main.KelvinTemp
-		minTemp = responseObject.Main.KelvinTempMin
-		maxTemp = responseObject.Main.KelvinTempMax
+		feelsLikeTemp = responseObject.Main.KelvinFeelsLike
 	case scale == "C":
 		currentTemp = responseObject.Main.KelvinTemp - 273.15
-		minTemp = responseObject.Main.KelvinTempMin - 273.15
-		maxTemp = responseObject.Main.KelvinTempMax - 273.15
+		feelsLikeTemp = responseObject.Main.KelvinFeelsLike - 273.15
 	case scale == "F":
 		currentTemp = responseObject.Main.KelvinTemp*9/5 - 459.67
-		minTemp = responseObject.Main.KelvinTempMin*9/5 - 459.67
-		maxTemp = responseObject.Main.KelvinTempMax*9/5 - 459.67
+		feelsLikeTemp = responseObject.Main.KelvinFeelsLike*9/5 - 459.67
 	}
 
 	lw := LocalWeather{
@@ -119,8 +127,9 @@ func GetLocal(zip int, scale string) (LocalWeather, error) {
 		responseObject.Weather[0].Main,
 		toFixed(currentTemp, 2),
 		responseObject.Main.Humidity,
-		toFixed(minTemp, 2),
-		toFixed(maxTemp, 2),
+		responseObject.Wind.Speed,
+		WindDegreeToDirection(float64(responseObject.Wind.Deg)),
+		toFixed(feelsLikeTemp, 2),
 	}
 	return lw, nil
 }
