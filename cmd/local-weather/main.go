@@ -33,8 +33,8 @@ func generateOutput(dst io.Writer, data []string) {
 		"Current Condition",
 		"Current Temp",
 		"Humidity",
-		"High Temp",
-		"Low Temp",
+		"Wind",
+		"Feels Like",
 	})
 
 	table.Append(data)
@@ -92,8 +92,8 @@ func execute() error {
 		localWeather.Current,
 		fmt.Sprintf("%s%s", floatToString(localWeather.Temp), tempScale),
 		fmt.Sprintf("%s%%", strconv.Itoa(localWeather.Humidity)),
-		fmt.Sprintf("%s%s", floatToString(localWeather.High), tempScale),
-		fmt.Sprintf("%s%s", floatToString(localWeather.Low), tempScale),
+		fmt.Sprintf("%smph %s", floatToString(localWeather.WindSpeed), localWeather.WindDirection),
+		fmt.Sprintf("%s%s", floatToString(localWeather.FeelsLike), tempScale),
 	}
 
 	generateOutput(os.Stdout, localWeatherStr)
