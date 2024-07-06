@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"log"
 	"math"
 	"net/http"
@@ -70,7 +70,7 @@ func getData(url string) ([]byte, error) {
 		log.Fatal(err)
 		os.Exit(1)
 	}
-	responseData, err := ioutil.ReadAll(response.Body)
+	responseData, err := io.ReadAll(response.Body)
 	response.Body.Close()
 	if err != nil {
 		log.Fatal(err)
