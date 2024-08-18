@@ -1,4 +1,4 @@
-module github.com/justinrsmith/local-weather-cli-go
+module github.com/justinrsmith/local-weather-cli-go/v3
 
 go 1.22.2
 

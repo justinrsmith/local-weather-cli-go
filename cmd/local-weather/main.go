@@ -9,7 +9,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/justinrsmith/local-weather-cli-go/pkg/fetchweather"
+	"github.com/justinrsmith/local-weather-cli-go/v3/pkg/fetchweather"
 	"github.com/olekukonko/tablewriter"
 )
 
