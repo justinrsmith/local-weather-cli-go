@@ -18,4 +18,4 @@ run:
 	./$(BINARY_NAME) --zipcode 10007 
 deps:
 	$(GOGET) github.com/olekukonko/tablewriter
-	$(GOGET) github.com/justinrsmith/local-weather-cli-go/pkg/fetchweather
+	$(GOGET) github.com/justinrsmith/local-weather-cli-go/v3/pkg/fetchweather
