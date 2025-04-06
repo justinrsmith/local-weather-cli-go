@@ -96,7 +96,7 @@ func WindDegreeToDirection(degree float64) string {
 func GetLocal(zip int, scale string) (LocalWeather, error) {
 	data, _ := zgetData(
 		fmt.Sprintf(
-			"https://local-weather-api-256018.appspot.com/?zip=%d,us",
+			"https://local-weather-api-456015.appspot.com/?zip=%d,us",
 			zip,
 		),
 	)
