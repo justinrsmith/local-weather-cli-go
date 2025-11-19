@@ -3,37 +3,26 @@ package fetchweather
 import (
 	"fmt"
 	"io"
-	"log"
 	"net/http"
 	"net/http/httptest"
-	"strings"
 	"testing"
 )
 
 func TestGetData(t *testing.T) {
 	mockResp := `{"hello": "world"}`
 	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
-		fmt.Fprintln(w, mockResp)
+		w.WriteHeader(http.StatusOK)
+		fmt.Fprint(w, mockResp)
 	}))
 	defer ts.Close()
 
-	res, err := http.Get(ts.URL)
-	if err != nil {
-		log.Fatal(err)
-	}
-	data, err := io.ReadAll(res.Body)
-	res.Body.Close()
-	if err != nil {
-		log.Fatal(err)
-	}
 	resp, err := getData(ts.URL)
 	if err != nil {
-		log.Fatal(err)
+		t.Fatalf("getData failed: %v", err)
 	}
 
-	if strings.TrimSuffix(string(resp), "\n") != mockResp {
-		fmt.Println(data)
-		t.Errorf("Incorrect response returned")
+	if string(resp) != mockResp {
+		t.Errorf("Incorrect response returned: got %q, want %q", string(resp), mockResp)
 	}
 }
 
@@ -43,25 +32,29 @@ func TestGetLocalKelvin(t *testing.T) {
 	zgetData = func(url string) ([]byte, error) {
 		mockResp := `{"coord":{"lon":-89.5,"lat":43.03},"weather":[{"id":804,"main":"Clouds","description":"overcast clouds","icon":"04d"}],"base":"stations","main":{"temp":272.84,"pressure":1014,"humidity":82,"temp_min":271.48,"temp_max":274.26},"visibility":16093,"wind":{"speed":7.7,"deg":310,"gust":11.3},"clouds":{"all":90},"dt":1572552019,"sys":{"type":1,"id":3551,"country":"US","sunrise":1572525057,"sunset":1572562328},"timezone":-18000,"id":0,"name":"Madison","cod":200}`
 		ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
-			fmt.Fprintln(w, mockResp)
+			w.WriteHeader(http.StatusOK)
+			fmt.Fprint(w, mockResp)
 		}))
 		defer ts.Close()
 
 		res, err := http.Get(ts.URL)
 		if err != nil {
-			log.Fatal(err)
+			return nil, err
 		}
+		defer res.Body.Close()
 		data, err := io.ReadAll(res.Body)
-		res.Body.Close()
 		if err != nil {
-			log.Fatal(err)
+			return nil, err
 		}
-		return data, err
+		return data, nil
 	}
 
-	localWeather, _ := GetLocal(61008, "K")
+	localWeather, err := GetLocal(61008, "K")
+	if err != nil {
+		t.Fatalf("GetLocal failed: %v", err)
+	}
 	if localWeather.Temp != 272.84 {
-		t.Errorf("Temperature is not the correct Kelvin temperature")
+		t.Errorf("Temperature is not the correct Kelvin temperature: got %f, want 272.84", localWeather.Temp)
 	}
 }
 
@@ -71,25 +64,29 @@ func TestGetLocalCelsius(t *testing.T) {
 	zgetData = func(url string) ([]byte, error) {
 		mockResp := `{"coord":{"lon":-89.5,"lat":43.03},"weather":[{"id":804,"main":"Clouds","description":"overcast clouds","icon":"04d"}],"base":"stations","main":{"temp":272.84,"pressure":1014,"humidity":82,"temp_min":271.48,"temp_max":274.26},"visibility":16093,"wind":{"speed":7.7,"deg":310,"gust":11.3},"clouds":{"all":90},"dt":1572552019,"sys":{"type":1,"id":3551,"country":"US","sunrise":1572525057,"sunset":1572562328},"timezone":-18000,"id":0,"name":"Madison","cod":200}`
 		ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
-			fmt.Fprintln(w, mockResp)
+			w.WriteHeader(http.StatusOK)
+			fmt.Fprint(w, mockResp)
 		}))
 		defer ts.Close()
 
 		res, err := http.Get(ts.URL)
 		if err != nil {
-			log.Fatal(err)
+			return nil, err
 		}
+		defer res.Body.Close()
 		data, err := io.ReadAll(res.Body)
-		res.Body.Close()
 		if err != nil {
-			log.Fatal(err)
+			return nil, err
 		}
-		return data, err
+		return data, nil
 	}
 
-	localWeather, _ := GetLocal(61008, "C")
+	localWeather, err := GetLocal(61008, "C")
+	if err != nil {
+		t.Fatalf("GetLocal failed: %v", err)
+	}
 	if localWeather.Temp != -0.31 {
-		t.Errorf("Temperature is not the correct Celsius temperature")
+		t.Errorf("Temperature is not the correct Celsius temperature: got %f, want -0.31", localWeather.Temp)
 	}
 }
 
@@ -99,25 +96,29 @@ func TestGetLocalFahrenheit(t *testing.T) {
 	zgetData = func(url string) ([]byte, error) {
 		mockResp := `{"coord":{"lon":-89.5,"lat":43.03},"weather":[{"id":804,"main":"Clouds","description":"overcast clouds","icon":"04d"}],"base":"stations","main":{"temp":272.84,"pressure":1014,"humidity":82,"temp_min":271.48,"temp_max":274.26},"visibility":16093,"wind":{"speed":7.7,"deg":310,"gust":11.3},"clouds":{"all":90},"dt":1572552019,"sys":{"type":1,"id":3551,"country":"US","sunrise":1572525057,"sunset":1572562328},"timezone":-18000,"id":0,"name":"Madison","cod":200}`
 		ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
-			fmt.Fprintln(w, mockResp)
+			w.WriteHeader(http.StatusOK)
+			fmt.Fprint(w, mockResp)
 		}))
 		defer ts.Close()
 
 		res, err := http.Get(ts.URL)
 		if err != nil {
-			log.Fatal(err)
+			return nil, err
 		}
+		defer res.Body.Close()
 		data, err := io.ReadAll(res.Body)
-		res.Body.Close()
 		if err != nil {
-			log.Fatal(err)
+			return nil, err
 		}
-		return data, err
+		return data, nil
 	}
 
-	localWeather, _ := GetLocal(61008, "F")
+	localWeather, err := GetLocal(61008, "F")
+	if err != nil {
+		t.Fatalf("GetLocal failed: %v", err)
+	}
 	if localWeather.Temp != 31.44 {
-		t.Errorf("Temperature is not the correct Fahrenheit temperature")
+		t.Errorf("Temperature is not the correct Fahrenheit temperature: got %f, want 31.44", localWeather.Temp)
 	}
 }
 
@@ -127,20 +128,21 @@ func TestGetLocalFails(t *testing.T) {
 	zgetData = func(url string) ([]byte, error) {
 		mockResp := `{"cod":404,"message":"city not found"}`
 		ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
-			fmt.Fprintln(w, mockResp)
+			w.WriteHeader(http.StatusOK)
+			fmt.Fprint(w, mockResp)
 		}))
 		defer ts.Close()
 
 		res, err := http.Get(ts.URL)
 		if err != nil {
-			log.Fatal(err)
+			return nil, err
 		}
+		defer res.Body.Close()
 		data, err := io.ReadAll(res.Body)
-		res.Body.Close()
 		if err != nil {
-			log.Fatal(err)
+			return nil, err
 		}
-		return data, err
+		return data, nil
 	}
 
 	_, err := GetLocal(6100, "K")
