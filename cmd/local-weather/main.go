@@ -108,7 +108,8 @@ func runWeather(cmd *cobra.Command, args []string) error {
 	ctx = context.WithValue(ctx, fetchweather.LoggerKey{}, logger)
 
 	logger.Debug("Fetching weather data", "zipcode", zipcode, "scale", scale)
-	localWeather, err := fetchweather.GetLocal(ctx, zipcode, scale)
+	fetcher := &fetchweather.HTTPClient{}
+	localWeather, err := fetchweather.GetLocal(ctx, fetcher, zipcode, scale)
 	if err != nil {
 		logger.Error("Failed to fetch weather", "error", err, "zipcode", zipcode)
 		return fmt.Errorf("failed to fetch weather: %w", err)

@@ -53,10 +53,22 @@ type LocalWeather struct {
 	FeelsLike     float64
 }
 
-var zgetData = getData
-
 // LoggerKey is the type for the logger context key.
 type LoggerKey struct{}
+
+// DataFetcher defines the interface for fetching data from a URL.
+// This interface allows for dependency injection and easier testing.
+type DataFetcher interface {
+	Fetch(ctx context.Context, url string) ([]byte, error)
+}
+
+// HTTPClient implements DataFetcher using the standard http.Client.
+type HTTPClient struct{}
+
+// Fetch implements DataFetcher by making an HTTP GET request.
+func (c *HTTPClient) Fetch(ctx context.Context, url string) ([]byte, error) {
+	return getData(ctx, url)
+}
 
 // getLogger extracts a logger from context, or returns a no-op logger if not found.
 func getLogger(ctx context.Context) *slog.Logger {
@@ -128,12 +140,13 @@ func WindDegreeToDirection(degree float64) string {
 // GetLocal fetches weather data for the given zip code and returns a LocalWeather struct.
 // The scale parameter must be one of: "C" (Celsius), "F" (Fahrenheit), or "K" (Kelvin).
 // The context controls the lifetime of the HTTP request.
-func GetLocal(ctx context.Context, zip int, scale string) (LocalWeather, error) {
+// The fetcher parameter allows for dependency injection and easier testing.
+func GetLocal(ctx context.Context, fetcher DataFetcher, zip int, scale string) (LocalWeather, error) {
 	logger := getLogger(ctx)
 	logger.Debug("Fetching weather data", "zip", zip, "scale", scale)
 
 	url := fmt.Sprintf("https://local-weather-api-456015.appspot.com/?zip=%d,us", zip)
-	data, err := zgetData(ctx, url)
+	data, err := fetcher.Fetch(ctx, url)
 	if err != nil {
 		logger.Error("Failed to fetch weather data", "error", err, "zip", zip)
 		return LocalWeather{}, fmt.Errorf("failed to get weather data: %w", err)
