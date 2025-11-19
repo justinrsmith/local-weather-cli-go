@@ -2,7 +2,7 @@ package fetchweather
 
 import (
 	"fmt"
-	"io/ioutil"
+	"io"
 	"log"
 	"net/http"
 	"net/http/httptest"
@@ -21,7 +21,7 @@ func TestGetData(t *testing.T) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	data, err := ioutil.ReadAll(res.Body)
+	data, err := io.ReadAll(res.Body)
 	res.Body.Close()
 	if err != nil {
 		log.Fatal(err)
@@ -51,7 +51,7 @@ func TestGetLocalKelvin(t *testing.T) {
 		if err != nil {
 			log.Fatal(err)
 		}
-		data, err := ioutil.ReadAll(res.Body)
+		data, err := io.ReadAll(res.Body)
 		res.Body.Close()
 		if err != nil {
 			log.Fatal(err)
@@ -79,7 +79,7 @@ func TestGetLocalCelsius(t *testing.T) {
 		if err != nil {
 			log.Fatal(err)
 		}
-		data, err := ioutil.ReadAll(res.Body)
+		data, err := io.ReadAll(res.Body)
 		res.Body.Close()
 		if err != nil {
 			log.Fatal(err)
@@ -107,7 +107,7 @@ func TestGetLocalFahrenheit(t *testing.T) {
 		if err != nil {
 			log.Fatal(err)
 		}
-		data, err := ioutil.ReadAll(res.Body)
+		data, err := io.ReadAll(res.Body)
 		res.Body.Close()
 		if err != nil {
 			log.Fatal(err)
@@ -135,7 +135,7 @@ func TestGetLocalFails(t *testing.T) {
 		if err != nil {
 			log.Fatal(err)
 		}
-		data, err := ioutil.ReadAll(res.Body)
+		data, err := io.ReadAll(res.Body)
 		res.Body.Close()
 		if err != nil {
 			log.Fatal(err)
