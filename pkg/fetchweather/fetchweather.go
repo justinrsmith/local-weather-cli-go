@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"log/slog"
 	"math"
 	"net/http"
 )
@@ -54,6 +55,17 @@ type LocalWeather struct {
 
 var zgetData = getData
 
+// LoggerKey is the type for the logger context key.
+type LoggerKey struct{}
+
+// getLogger extracts a logger from context, or returns a no-op logger if not found.
+func getLogger(ctx context.Context) *slog.Logger {
+	if logger, ok := ctx.Value(LoggerKey{}).(*slog.Logger); ok {
+		return logger
+	}
+	return slog.Default()
+}
+
 func round(num float64) int {
 	return int(num + math.Copysign(0.5, num))
 }
@@ -65,27 +77,37 @@ func toFixed(num float64, precision int) float64 {
 
 // getData fetches data from the given URL using the provided context and returns the response body.
 func getData(ctx context.Context, url string) ([]byte, error) {
+	logger := getLogger(ctx)
+	logger.Debug("Making HTTP request", "url", url)
+
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
 	if err != nil {
+		logger.Error("Failed to create HTTP request", "error", err, "url", url)
 		return nil, fmt.Errorf("failed to create request: %w", err)
 	}
 
 	client := &http.Client{}
 	response, err := client.Do(req)
 	if err != nil {
+		logger.Error("HTTP request failed", "error", err, "url", url)
 		return nil, fmt.Errorf("failed to fetch data: %w", err)
 	}
 	defer response.Body.Close()
 
+	logger.Debug("HTTP response received", "status", response.StatusCode, "url", url)
+
 	if response.StatusCode != http.StatusOK {
+		logger.Warn("Unexpected HTTP status", "status", response.StatusCode, "url", url)
 		return nil, fmt.Errorf("unexpected HTTP status: %d", response.StatusCode)
 	}
 
 	responseData, err := io.ReadAll(response.Body)
 	if err != nil {
+		logger.Error("Failed to read response body", "error", err, "url", url)
 		return nil, fmt.Errorf("failed to read response body: %w", err)
 	}
 
+	logger.Debug("Successfully read response body", "size", len(responseData), "url", url)
 	return responseData, nil
 }
 
@@ -107,29 +129,33 @@ func WindDegreeToDirection(degree float64) string {
 // The scale parameter must be one of: "C" (Celsius), "F" (Fahrenheit), or "K" (Kelvin).
 // The context controls the lifetime of the HTTP request.
 func GetLocal(ctx context.Context, zip int, scale string) (LocalWeather, error) {
-	data, err := zgetData(
-		ctx,
-		fmt.Sprintf(
-			"https://local-weather-api-456015.appspot.com/?zip=%d,us",
-			zip,
-		),
-	)
+	logger := getLogger(ctx)
+	logger.Debug("Fetching weather data", "zip", zip, "scale", scale)
+
+	url := fmt.Sprintf("https://local-weather-api-456015.appspot.com/?zip=%d,us", zip)
+	data, err := zgetData(ctx, url)
 	if err != nil {
+		logger.Error("Failed to fetch weather data", "error", err, "zip", zip)
 		return LocalWeather{}, fmt.Errorf("failed to get weather data: %w", err)
 	}
 
 	var responseObject Response
 	if err := json.Unmarshal(data, &responseObject); err != nil {
+		logger.Error("Failed to parse API response", "error", err, "zip", zip)
 		return LocalWeather{}, fmt.Errorf("failed to parse response: %w", err)
 	}
 
 	if responseObject.RespCode != 200 {
+		logger.Warn("API returned error response", "code", responseObject.RespCode, "message", responseObject.Message, "zip", zip)
 		return LocalWeather{}, errors.New(responseObject.Message)
 	}
 
 	if len(responseObject.Weather) == 0 {
+		logger.Warn("No weather data in API response", "zip", zip)
 		return LocalWeather{}, errors.New("no weather data in response")
 	}
+
+	logger.Debug("Successfully parsed weather data", "city", responseObject.Name, "zip", zip)
 
 	var currentTemp float64
 	var feelsLikeTemp float64

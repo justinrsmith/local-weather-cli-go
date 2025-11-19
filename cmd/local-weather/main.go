@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"io"
+	"log/slog"
 	"os"
 	"strconv"
 	"strings"
@@ -16,6 +17,7 @@ import (
 var (
 	zipcode int
 	scale   string
+	verbose bool
 )
 
 // floatToString formats a float64 to a string with one decimal place.
@@ -73,6 +75,18 @@ the current weather in your terminal. Currently supports U.S. zipcodes.`,
 
 // runWeather executes the weather fetching and display logic.
 func runWeather(cmd *cobra.Command, args []string) error {
+	// Setup structured logging
+	var logger *slog.Logger
+	if verbose {
+		logger = slog.New(slog.NewTextHandler(os.Stderr, &slog.HandlerOptions{
+			Level: slog.LevelDebug,
+		}))
+	} else {
+		logger = slog.New(slog.NewTextHandler(os.Stderr, &slog.HandlerOptions{
+			Level: slog.LevelError, // Only log errors by default
+		}))
+	}
+
 	// Validate zipcode
 	if zipcode == 0 {
 		return fmt.Errorf("zipcode is required")
@@ -90,10 +104,16 @@ func runWeather(cmd *cobra.Command, args []string) error {
 	if ctx == nil {
 		ctx = context.Background()
 	}
+	// Add logger to context
+	ctx = context.WithValue(ctx, fetchweather.LoggerKey{}, logger)
+
+	logger.Debug("Fetching weather data", "zipcode", zipcode, "scale", scale)
 	localWeather, err := fetchweather.GetLocal(ctx, zipcode, scale)
 	if err != nil {
+		logger.Error("Failed to fetch weather", "error", err, "zipcode", zipcode)
 		return fmt.Errorf("failed to fetch weather: %w", err)
 	}
+	logger.Debug("Successfully fetched weather data", "city", localWeather.City)
 
 	// Format output
 	tempScale := getTempScaleLabel(scale)
@@ -113,6 +133,7 @@ func runWeather(cmd *cobra.Command, args []string) error {
 func init() {
 	rootCmd.Flags().IntVarP(&zipcode, "zipcode", "z", 0, "zip code of U.S. city")
 	rootCmd.Flags().StringVarP(&scale, "scale", "s", "F", "temperature scale to use (C - Celsius, F - Fahrenheit, K - Kelvin)")
+	rootCmd.Flags().BoolVarP(&verbose, "verbose", "v", false, "enable verbose logging")
 
 	// Mark zipcode as required
 	rootCmd.MarkFlagRequired("zipcode")
