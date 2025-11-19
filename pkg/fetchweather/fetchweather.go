@@ -1,6 +1,7 @@
 package fetchweather
 
 import (
+	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -62,9 +63,15 @@ func toFixed(num float64, precision int) float64 {
 	return float64(round(num*output)) / output
 }
 
-// getData fetches data from the given URL and returns the response body.
-func getData(url string) ([]byte, error) {
-	response, err := http.Get(url)
+// getData fetches data from the given URL using the provided context and returns the response body.
+func getData(ctx context.Context, url string) ([]byte, error) {
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
+	if err != nil {
+		return nil, fmt.Errorf("failed to create request: %w", err)
+	}
+
+	client := &http.Client{}
+	response, err := client.Do(req)
 	if err != nil {
 		return nil, fmt.Errorf("failed to fetch data: %w", err)
 	}
@@ -98,8 +105,10 @@ func WindDegreeToDirection(degree float64) string {
 
 // GetLocal fetches weather data for the given zip code and returns a LocalWeather struct.
 // The scale parameter must be one of: "C" (Celsius), "F" (Fahrenheit), or "K" (Kelvin).
-func GetLocal(zip int, scale string) (LocalWeather, error) {
+// The context controls the lifetime of the HTTP request.
+func GetLocal(ctx context.Context, zip int, scale string) (LocalWeather, error) {
 	data, err := zgetData(
+		ctx,
 		fmt.Sprintf(
 			"https://local-weather-api-456015.appspot.com/?zip=%d,us",
 			zip,

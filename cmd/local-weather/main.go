@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"io"
 	"os"
@@ -85,7 +86,11 @@ func runWeather(cmd *cobra.Command, args []string) error {
 	}
 
 	// Fetch weather data
-	localWeather, err := fetchweather.GetLocal(zipcode, scale)
+	ctx := cmd.Context()
+	if ctx == nil {
+		ctx = context.Background()
+	}
+	localWeather, err := fetchweather.GetLocal(ctx, zipcode, scale)
 	if err != nil {
 		return fmt.Errorf("failed to fetch weather: %w", err)
 	}
@@ -108,7 +113,7 @@ func runWeather(cmd *cobra.Command, args []string) error {
 func init() {
 	rootCmd.Flags().IntVarP(&zipcode, "zipcode", "z", 0, "zip code of U.S. city")
 	rootCmd.Flags().StringVarP(&scale, "scale", "s", "F", "temperature scale to use (C - Celsius, F - Fahrenheit, K - Kelvin)")
-	
+
 	// Mark zipcode as required
 	rootCmd.MarkFlagRequired("zipcode")
 }
