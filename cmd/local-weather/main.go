@@ -6,6 +6,7 @@ import (
 	"io"
 	"log"
 	"os"
+	"slices"
 	"strconv"
 	"strings"
 
@@ -15,15 +16,6 @@ import (
 
 func floatToString(inputNum float64) string {
 	return fmt.Sprintf("%.1f", inputNum)
-}
-
-func stringInSlice(str string, list []string) bool {
-	for _, val := range list {
-		if str == val {
-			return true
-		}
-	}
-	return false
 }
 
 func generateOutput(dst io.Writer, data []string) {
@@ -38,16 +30,16 @@ func generateOutput(dst io.Writer, data []string) {
 	})
 
 	table.Append(data)
-	table.Render() // Send output
+	table.Render()
 }
 
 func getTempScaleLabel(scale string) string {
-	switch {
-	case scale == "K":
+	switch scale {
+	case "K":
 		return "K"
-	case scale == "F":
+	case "F":
 		return "\u00b0F"
-	case scale == "C":
+	case "C":
 		return "\u00b0C"
 	}
 	return ""
@@ -59,7 +51,6 @@ func execute() error {
 
 	flag.Usage = func() {
 		flag.PrintDefaults()
-		os.Exit(0)
 	}
 
 	flag.IntVar(&zipcode, "zipcode", 0, "zip code of U.S. city")
@@ -70,19 +61,18 @@ func execute() error {
 	flag.Parse()
 	if zipcode == 0 {
 		flag.PrintDefaults()
-		os.Exit(1)
+		return fmt.Errorf("zipcode is required")
 	}
 	// temp scale flag should be case insensitive
 	scale = strings.ToUpper(scale)
-	if !stringInSlice(scale, []string{"C", "K", "F"}) {
+	if !slices.Contains([]string{"C", "K", "F"}, scale) {
 		flag.PrintDefaults()
-		fmt.Println("Invalid temperature scale selected")
-		os.Exit(1)
+		return fmt.Errorf("invalid temperature scale: %s", scale)
 	}
 
 	localWeather, err := fetchweather.GetLocal(zipcode, scale)
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
 
 	tempScale := getTempScaleLabel(scale)
@@ -103,6 +93,6 @@ func execute() error {
 
 func main() {
 	if err := execute(); err != nil {
-		os.Exit(-1)
+		log.Fatal(err)
 	}
 }

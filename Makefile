@@ -17,5 +17,4 @@ run:
 	$(GOBUILD) -o $(BINARY_NAME) cmd/local-weather/main.go 
 	./$(BINARY_NAME) --zipcode 10007 
 deps:
-	$(GOGET) github.com/olekukonko/tablewriter
-	$(GOGET) github.com/justinrsmith/local-weather-cli-go/v3/pkg/fetchweather
+	$(GOCMD) mod download
