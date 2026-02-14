@@ -2,16 +2,14 @@ package fetchweather
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
 	"io"
-	"log"
 	"math"
 	"net/http"
-	"os"
+	"time"
 )
 
-// Response struct
+// Response represents the raw API response from the weather service.
 type Response struct {
 	Weather  []Weather `json:"weather"`
 	Main     Main      `json:"main"`
@@ -21,14 +19,14 @@ type Response struct {
 	Message  string    `json:"message"`
 }
 
-// Weather struct
+// Weather represents a weather condition entry from the API.
 type Weather struct {
-	ID          string `json:"id"`
+	ID          int    `json:"id"`
 	Main        string `json:"main"`
 	Description string `json:"description"`
 }
 
-// Main struct
+// Main represents the primary weather measurements.
 type Main struct {
 	KelvinTemp      float64 `json:"temp"`
 	KelvinFeelsLike float64 `json:"feels_like"`
@@ -36,13 +34,13 @@ type Main struct {
 	Humidity        int     `json:"humidity"`
 }
 
-// Wind struct
+// Wind represents wind speed and direction data.
 type Wind struct {
 	Speed float64 `json:"speed"`
 	Deg   int     `json:"deg"`
 }
 
-// LocalWeather struct
+// LocalWeather holds the processed weather data for display.
 type LocalWeather struct {
 	City          string
 	Current       string
@@ -55,29 +53,26 @@ type LocalWeather struct {
 
 var zgetData = getData
 
-func round(num float64) int {
-	return int(num + math.Copysign(0.5, num))
-}
-
 func toFixed(num float64, precision int) float64 {
 	output := math.Pow(10, float64(precision))
-	return float64(round(num*output)) / output
+	return math.Round(num*output) / output
 }
 
+var httpClient = &http.Client{Timeout: 10 * time.Second}
+
 func getData(url string) ([]byte, error) {
-	response, err := http.Get(url)
+	response, err := httpClient.Get(url)
 	if err != nil {
-		log.Fatal(err)
-		os.Exit(1)
+		return nil, fmt.Errorf("fetching weather data: %w", err)
 	}
+	defer response.Body.Close()
+
 	responseData, err := io.ReadAll(response.Body)
-	response.Body.Close()
 	if err != nil {
-		log.Fatal(err)
-		os.Exit(1)
+		return nil, fmt.Errorf("reading response body: %w", err)
 	}
 
-	return responseData, err
+	return responseData, nil
 }
 
 func WindDegreeToDirection(degree float64) string {
@@ -92,44 +87,50 @@ func WindDegreeToDirection(degree float64) string {
 	return directions[index]
 }
 
-// GetLocal function calls to the api and builds LocalWeather struct
+// GetLocal calls the weather API and returns processed weather data.
 func GetLocal(zip int, scale string) (LocalWeather, error) {
-	data, _ := zgetData(
+	data, err := zgetData(
 		fmt.Sprintf(
 			"https://local-weather-api-456015.appspot.com/?zip=%d,us",
 			zip,
 		),
 	)
+	if err != nil {
+		return LocalWeather{}, err
+	}
+
 	var responseObject Response
-	json.Unmarshal(data, &responseObject)
+	if err := json.Unmarshal(data, &responseObject); err != nil {
+		return LocalWeather{}, fmt.Errorf("parsing weather response: %w", err)
+	}
 
 	if responseObject.RespCode != 200 {
-		return LocalWeather{}, errors.New(responseObject.Message)
+		return LocalWeather{}, fmt.Errorf("weather API error: %s", responseObject.Message)
 	}
 
 	var currentTemp float64
 	var feelsLikeTemp float64
 
-	switch {
-	case scale == "K":
+	switch scale {
+	case "K":
 		currentTemp = responseObject.Main.KelvinTemp
 		feelsLikeTemp = responseObject.Main.KelvinFeelsLike
-	case scale == "C":
+	case "C":
 		currentTemp = responseObject.Main.KelvinTemp - 273.15
 		feelsLikeTemp = responseObject.Main.KelvinFeelsLike - 273.15
-	case scale == "F":
+	case "F":
 		currentTemp = responseObject.Main.KelvinTemp*9/5 - 459.67
 		feelsLikeTemp = responseObject.Main.KelvinFeelsLike*9/5 - 459.67
 	}
 
 	lw := LocalWeather{
-		responseObject.Name,
-		responseObject.Weather[0].Main,
-		toFixed(currentTemp, 2),
-		responseObject.Main.Humidity,
-		responseObject.Wind.Speed,
-		WindDegreeToDirection(float64(responseObject.Wind.Deg)),
-		toFixed(feelsLikeTemp, 2),
+		City:          responseObject.Name,
+		Current:       responseObject.Weather[0].Main,
+		Temp:          toFixed(currentTemp, 2),
+		Humidity:      responseObject.Main.Humidity,
+		WindSpeed:     responseObject.Wind.Speed,
+		WindDirection: WindDegreeToDirection(float64(responseObject.Wind.Deg)),
+		FeelsLike:     toFixed(feelsLikeTemp, 2),
 	}
 	return lw, nil
 }
